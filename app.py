@@ -52,7 +52,7 @@ connection = mysql.connect()
 connection.autocommit(True)
 cursor = connection.cursor()
 
-client = boto3.client('frauddetector')
+client = boto3.client('frauddetector', region_name='us-east-1')
 
 class Claimant():
     name = ''
