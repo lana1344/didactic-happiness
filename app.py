@@ -1,3 +1,4 @@
+# This is a basic web site partially modified from https://www.youtube.com/watch?v=Z1RJmh_OqeA
 # To execute this file,
 #   1. install python3 (verify with "$python3 --version")
 #   2. install pip3 (verify with "$pip3 --version")
@@ -33,7 +34,13 @@ import boto3, uuid, json
 app = Flask(__name__)
 app.secret_key = "myownsecret"
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-app.config['MYSQL_DATABASE_HOST'] = 'enes-db-3.c2oqcilw7wm0.us-east-1.rds.amazonaws.com'
+
+# This "/home/ec2-user/dbserver.endpoint" file has to be created from cloudformation template and it has RDS endpoint
+db_endpoint = open("dbserver.endpoint", 'r', encoding='UTF-8')
+
+
+# Configure mysql database
+app.config['MYSQL_DATABASE_HOST'] = db_endpoint.readline().strip()
 app.config['MYSQL_DATABASE_USER'] = 'admin'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'Enes123456'
 app.config['MYSQL_DATABASE_DB'] = 'enes_phonebook'
@@ -119,5 +126,5 @@ def index():
         return render_template('form.html')
 
 if __name__ == "__main__":
-    #app.run(debug = True)
-    app.run(host='0.0.0.0', port=80)
+    app.run(debug = True)
+    #app.run(host='0.0.0.0', port=80)
