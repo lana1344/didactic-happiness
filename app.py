@@ -1,4 +1,3 @@
-# This is a basic web site partially modified from https://www.youtube.com/watch?v=Z1RJmh_OqeA
 # To execute this file,
 #   1. install python3 (verify with "$python3 --version")
 #   2. install pip3 (verify with "$pip3 --version")
@@ -29,23 +28,20 @@ from flask import Flask, jsonify, render_template, url_for, request, redirect, j
 from flaskext.mysql import MySQL
 #from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import boto3, uuid, json, pymysql
+import boto3, uuid, json
 
 app = Flask(__name__)
 app.secret_key = "myownsecret"
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-# app.config['MYSQL_DATABASE_HOST'] = 'enes-db-3.c2oqcilw7wm0.us-east-1.rds.amazonaws.com'
-# app.config['MYSQL_DATABASE_USER'] = 'admin'
-# app.config['MYSQL_DATABASE_PASSWORD'] = 'Enes123456'
-# app.config['MYSQL_DATABASE_DB'] = 'enes_phonebook'
-# app.config['MYSQL_DATABASE_PORT'] = 3306
+app.config['MYSQL_DATABASE_HOST'] = 'enes-db-3.c2oqcilw7wm0.us-east-1.rds.amazonaws.com'
+app.config['MYSQL_DATABASE_USER'] = 'admin'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'Enes123456'
+app.config['MYSQL_DATABASE_DB'] = 'enes_phonebook'
+app.config['MYSQL_DATABASE_PORT'] = 3306
 
-# mysql = MySQL()
-# mysql.init_app(app)
-# connection = mysql.connect()
-
-connection = pymysql.connect(host='enes-db-3', user='admin', passwd='Enes123456', db='enes_phonebook', connect_timeout=5)
-
+mysql = MySQL()
+mysql.init_app(app)
+connection = mysql.connect()
 connection.autocommit(True)
 cursor = connection.cursor()
 
@@ -123,4 +119,5 @@ def index():
         return render_template('form.html')
 
 if __name__ == "__main__":
-    app.run(debug = True)
+    #app.run(debug = True)
+    app.run(host='0.0.0.0', port=80)
