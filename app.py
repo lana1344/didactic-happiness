@@ -25,7 +25,7 @@
 #       optionally, redeploy on AWS (issue "$zappa update dev")
 #   5. to shutdown and delete the app (issue "$zappa undeploy dev")
 
-from flask import Flask, jsonify, render_template, url_for, request, redirect, jsonify, flash
+from flask import Flask, jsonify, render_template, url_for, request, redirect, jsonify, flash, Markup
 from flaskext.mysql import MySQL
 #from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -80,20 +80,24 @@ def index():
         thisUser.postal = request.form['inputZip']
         thisUser.phone = request.form["inputPhone"]
         thisUser.email = request.form['inputEmail'] 
-
+        
         try:
             print(thisUser.name)
+            print(thisUser.email)
+            print(thisUser.ip)
 
             try:
+
                 response = client.get_event_prediction(
                     detectorId="detector-getting-started",
                     eventId=str(uuid.uuid4()),
                     eventTypeName="registration",
-                    eventTimestamp="2019-08-10T20:44:00Z",
+                    #eventTimestamp="2019-08-10T20:44:00Z",
+                    eventTimestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
                     entities=[{"entityType": "customer", "entityId": str(uuid.uuid4())},],
                     eventVariables={
                         "email_address": thisUser.email,
-                        "ip_address": "46.41.252.160"
+                        "ip_address": thisUser.ip
                     }
                 )
                 outcome = json.dumps(response['ruleResults'][0]['outcomes'][0])[1:-1]
@@ -117,7 +121,7 @@ def index():
             #                 INTO phonebook 
             #                 (name, number, ip_address, email_address, billing_state, user_agent, billing_postal, billing_address) 
             #                 VALUES("{}", "{}", {}, {}, {}, {}, {}, {})'''.format(thisUser.name, thisUser.phone, thisUser.ip, thisUser.email, thisUser.state, thisUser.ua, thisUser.postal, thisUser.address))
-            flash(f"New claim for {thisUser.name} has been recorded: {outcome}")
+            flash(Markup(f"New claim for {thisUser.name} has been recorded: <strong>{outcome}</strong>"))
             return redirect('/')
         except:
             return 'There was an issue adding your task'
